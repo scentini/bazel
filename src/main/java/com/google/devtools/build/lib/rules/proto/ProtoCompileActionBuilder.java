@@ -604,24 +604,9 @@ public class ProtoCompileActionBuilder {
 
   private static String guessProtoPathUnderRoot(
       String outputDirectory, PathFragment sourceRootPath, Artifact proto) {
-    // TODO(lberki): Instead of guesswork like this, we should track which proto belongs to
-    // which source root. Unfortunately, that's a non-trivial migration since
-    // ProtoInfo is on the Starlark API. Therefore, we hack:
-    // - If the source root is under the output directory (itself determined in a hacky way and
-    // relying on the fact that the output roots of all repositories are under the same directory
-    // under the exec root), we check whether the .proto file is under it. If so, we have a match.
-    // - Otherwise, we check whether the .proto file is either under that source directory or under
-    // bin or genfiles by prefix-matching its root-relative path.
-    if (sourceRootPath.segmentCount() > 0 && sourceRootPath.getSegment(0).equals(outputDirectory)) {
-      if (proto.getExecPath().startsWith(sourceRootPath)) {
-        return proto.getExecPath().relativeTo(sourceRootPath).getPathString();
-      }
-    } else {
-      if (proto.getRootRelativePath().startsWith(sourceRootPath)) {
-        return proto.getRootRelativePath().relativeTo(sourceRootPath).getPathString();
-      }
+    if (proto.getExecPath().startsWith(sourceRootPath)) {
+      return proto.getExecPath().relativeTo(sourceRootPath).getPathString();
     }
-
     return null;
   }
 

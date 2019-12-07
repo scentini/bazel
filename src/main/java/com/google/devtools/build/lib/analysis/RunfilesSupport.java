@@ -224,7 +224,7 @@ public final class RunfilesSupport {
     PathFragment relativePath =
         (owningExecutable != null)
             ? owningExecutable.getRootRelativePath()
-            : context.getPackageDirectory().getRelative(context.getLabel().getName());
+            : context.getPackageDirectoryRelativeToExecroot().getRelative(context.getLabel().getName());
     String basename = relativePath.getBaseName();
     PathFragment inputManifestPath = relativePath.replaceName(basename + INPUT_MANIFEST_EXT);
     return context.getDerivedArtifact(

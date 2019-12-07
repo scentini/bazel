@@ -1436,16 +1436,18 @@ public abstract class SkyframeExecutor implements WalkableGraphFactory {
 
   protected ImmutableMap<Root, ArtifactRoot> createSourceArtifactRootMapOnNewPkgLocator(
       PathPackageLocator oldLocator, PathPackageLocator pkgLocator) {
-    return Stream.concat(
-            pkgLocator.getPathEntries().stream(),
-            Stream.of(
-                Root.absoluteRoot(fileSystem),
-                Root.fromPath(directories.getOutputBase()
-                    .getRelative(LabelConstants.EXTERNAL_PATH_PREFIX))))
-        .distinct()
-        .collect(
-            ImmutableMap.toImmutableMap(
-                java.util.function.Function.identity(), ArtifactRoot::asSourceRoot));
+    Root externalRoot = Root.fromPath(
+        directories.getOutputBase().getRelative(LabelConstants.EXTERNAL_PATH_PREFIX));
+    Root absoluteRoot = Root.absoluteRoot(fileSystem);
+
+    ImmutableMap.Builder<Root, ArtifactRoot> result = ImmutableMap.builder();
+    for (Root packagePathEntry : pkgLocator.getPathEntries()) {
+      result.put(packagePathEntry, ArtifactRoot.asSourceRoot(packagePathEntry));
+    }
+
+    result.put(absoluteRoot, ArtifactRoot.asSourceRoot(absoluteRoot));
+    result.put(externalRoot, ArtifactRoot.asExternalSourceRoot(externalRoot));
+    return result.build();
   }
 
   public SkyframeBuildView getSkyframeBuildView() {

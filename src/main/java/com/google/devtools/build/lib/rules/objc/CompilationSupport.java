@@ -1341,7 +1341,7 @@ public class CompilationSupport {
     PathFragment labelName = PathFragment.create(ruleContext.getLabel().getName());
     String libraryIdentifier =
         ruleContext
-            .getPackageDirectory()
+            .getPackageDirectoryRelativeToExecroot()
             .getRelative(labelName.replaceName("lib" + labelName.getBaseName()))
             .getPathString();
     ObjcVariablesExtension extension =

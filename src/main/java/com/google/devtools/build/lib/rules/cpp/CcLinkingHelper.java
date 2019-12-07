@@ -424,7 +424,7 @@ public final class CcLinkingHelper {
     PathFragment labelName = PathFragment.create(label.getName());
     String libraryIdentifier =
         actionConstructionContext
-            .getPackageDirectory()
+            .getPackageDirectoryRelativeToExecroot()
             .getRelative(labelName.replaceName("lib" + labelName.getBaseName()))
             .getPathString();
 

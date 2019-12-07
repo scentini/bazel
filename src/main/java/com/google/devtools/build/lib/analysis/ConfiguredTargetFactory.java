@@ -72,6 +72,7 @@ import com.google.devtools.build.lib.skyframe.ConfiguredTargetAndData;
 import com.google.devtools.build.lib.skyframe.ConfiguredTargetKey;
 import com.google.devtools.build.lib.util.ClassName;
 import com.google.devtools.build.lib.util.OrderedSetMultimap;
+import com.google.devtools.build.lib.vfs.PathFragment;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;

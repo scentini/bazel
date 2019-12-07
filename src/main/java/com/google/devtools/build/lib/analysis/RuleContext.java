@@ -610,7 +610,7 @@ public final class RuleContext extends TargetContext
    */
   public Artifact createOutputArtifact() {
     Target target = getTarget();
-    PathFragment rootRelativePath = getPackageDirectory()
+    PathFragment rootRelativePath = getPackageDirectoryRelativeToExecroot()
         .getRelative(PathFragment.create(target.getName()));
 
     return internalCreateOutputArtifact(rootRelativePath, target, OutputFile.Kind.FILE);
@@ -630,7 +630,7 @@ public final class RuleContext extends TargetContext
 
     String fileExtension = isExecutedOnWindows ? ".cmd" : ".sh";
 
-    PathFragment rootRelativePath = getPackageDirectory()
+    PathFragment rootRelativePath = getPackageDirectoryRelativeToExecroot()
         .getRelative(PathFragment.create(target.getName() + fileExtension));
 
     return internalCreateOutputArtifact(rootRelativePath, target, OutputFile.Kind.FILE);
@@ -642,7 +642,7 @@ public final class RuleContext extends TargetContext
    * @see #createOutputArtifact()
    */
   public Artifact createOutputArtifact(OutputFile out) {
-    PathFragment packageRelativePath = getPackageDirectory()
+    PathFragment packageRelativePath = getPackageDirectoryRelativeToExecroot()
         .getRelative(PathFragment.create(out.getName()));
     return internalCreateOutputArtifact(packageRelativePath, out, out.getKind());
   }
@@ -726,7 +726,7 @@ public final class RuleContext extends TargetContext
    */
   private Artifact.DerivedArtifact getPackageRelativeArtifact(
       PathFragment relative, ArtifactRoot root, boolean contentBasedPath) {
-    return getDerivedArtifact(getPackageDirectory().getRelative(relative), root, contentBasedPath);
+    return getDerivedArtifact(getPackageDirectoryRelativeToExecroot().getRelative(relative), root, contentBasedPath);
   }
 
   /**
@@ -752,6 +752,11 @@ public final class RuleContext extends TargetContext
     return getLabel().getPackageIdentifier().getSourceRoot();
   }
 
+  @Override
+  public PathFragment getPackageDirectoryRelativeToExecroot() {
+    return getLabel().getPackageIdentifier().getPathUnderExecRoot();
+  }
+
   /**
    * Creates an artifact under a given root with the given root-relative path.
    *
@@ -772,17 +777,17 @@ public final class RuleContext extends TargetContext
    */
   public Artifact.DerivedArtifact getDerivedArtifact(
       PathFragment rootRelativePath, ArtifactRoot root, boolean contentBasedPath) {
-    Preconditions.checkState(rootRelativePath.startsWith(getPackageDirectory()),
+    Preconditions.checkState(rootRelativePath.startsWith(getPackageDirectoryRelativeToExecroot()),
         "Output artifact '%s' not under package directory '%s' for target '%s'",
-        rootRelativePath, getPackageDirectory(), getLabel());
+        rootRelativePath, getPackageDirectoryRelativeToExecroot(), getLabel());
     return getAnalysisEnvironment().getDerivedArtifact(rootRelativePath, root, contentBasedPath);
   }
 
   @Override
   public SpecialArtifact getTreeArtifact(PathFragment rootRelativePath, ArtifactRoot root) {
-    Preconditions.checkState(rootRelativePath.startsWith(getPackageDirectory()),
+    Preconditions.checkState(rootRelativePath.startsWith(getPackageDirectoryRelativeToExecroot()),
         "Output artifact '%s' not under package directory '%s' for target '%s'",
-        rootRelativePath, getPackageDirectory(), getLabel());
+        rootRelativePath, getPackageDirectoryRelativeToExecroot(), getLabel());
     return getAnalysisEnvironment().getTreeArtifact(rootRelativePath, root);
   }
 
@@ -791,7 +796,7 @@ public final class RuleContext extends TargetContext
    * thus guaranteeing that it never clashes with artifacts created by rules in other packages.
    */
   public Artifact getPackageRelativeTreeArtifact(PathFragment relative, ArtifactRoot root) {
-    return getTreeArtifact(getPackageDirectory().getRelative(relative), root);
+    return getTreeArtifact(getPackageDirectoryRelativeToExecroot().getRelative(relative), root);
   }
 
   /**

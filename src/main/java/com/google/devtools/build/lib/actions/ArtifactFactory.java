@@ -20,6 +20,7 @@ import com.google.common.util.concurrent.Striped;
 import com.google.devtools.build.lib.actions.ActionLookupValue.ActionLookupKey;
 import com.google.devtools.build.lib.actions.Artifact.SourceArtifact;
 import com.google.devtools.build.lib.actions.Artifact.SpecialArtifactType;
+import com.google.devtools.build.lib.cmdline.LabelConstants;
 import com.google.devtools.build.lib.cmdline.PackageIdentifier;
 import com.google.devtools.build.lib.cmdline.RepositoryName;
 import com.google.devtools.build.lib.concurrent.ThreadSafety.ThreadCompatible;
@@ -400,6 +401,8 @@ public class ArtifactFactory implements ArtifactResolver {
     if (execPath.containsUplevelReferences()) {
       // Source exec paths cannot escape the source root.
       return null;
+    } else if(execPath.startsWith(LabelConstants.EXTERNAL_PATH_PREFIX)) {
+      execPath = execPath.relativeTo(LabelConstants.EXTERNAL_PATH_PREFIX);
     }
     // Don't create an artifact if it's derived.
     if (isDerivedArtifact(execPath)) {

@@ -645,7 +645,7 @@ public class CppHelper {
         factory.createMiddlemanAllowMultiple(
             ruleContext.getAnalysisEnvironment(),
             actionOwner,
-            ruleContext.getPackageDirectory(),
+            ruleContext.getPackageDirectoryRelativeToExecroot(),
             purpose,
             artifacts,
             configuration.getMiddlemanDirectory(ruleContext.getRule().getRepository())));

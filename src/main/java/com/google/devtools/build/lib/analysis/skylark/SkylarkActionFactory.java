@@ -120,18 +120,18 @@ public class SkylarkActionFactory implements SkylarkActionFactoryApi {
 
     PathFragment fragment;
     if (Starlark.NONE.equals(sibling)) {
-      fragment = ruleContext.getPackageDirectory().getRelative(PathFragment.create(filename));
+      fragment = ruleContext.getPackageDirectoryRelativeToExecroot().getRelative(PathFragment.create(filename));
     } else {
       PathFragment original = ((Artifact) sibling).getRootRelativePath();
       fragment = original.replaceName(filename);
     }
 
-    if (!fragment.startsWith(ruleContext.getPackageDirectory())) {
+    if (!fragment.startsWith(ruleContext.getPackageDirectoryRelativeToExecroot())) {
       throw new EvalException(
           loc,
           String.format(
               "the output artifact '%s' is not under package directory '%s' for target '%s'",
-              fragment, ruleContext.getPackageDirectory(), ruleContext.getLabel()));
+              fragment, ruleContext.getPackageDirectoryRelativeToExecroot(), ruleContext.getLabel()));
     }
     return ruleContext.getDerivedArtifact(fragment, newFileRoot());
   }
@@ -142,17 +142,17 @@ public class SkylarkActionFactory implements SkylarkActionFactoryApi {
     PathFragment fragment;
 
     if (Starlark.NONE.equals(sibling)) {
-      fragment = ruleContext.getPackageDirectory().getRelative(PathFragment.create(filename));
+      fragment = ruleContext.getPackageDirectoryRelativeToExecroot().getRelative(PathFragment.create(filename));
     } else {
       PathFragment original = ((Artifact) sibling).getRootRelativePath();
       fragment = original.replaceName(filename);
     }
 
-    if (!fragment.startsWith(ruleContext.getPackageDirectory())) {
+    if (!fragment.startsWith(ruleContext.getPackageDirectoryRelativeToExecroot())) {
       throw new EvalException(
           String.format(
               "the output directory '%s' is not under package directory '%s' for target '%s'",
-              fragment, ruleContext.getPackageDirectory(), ruleContext.getLabel()));
+              fragment, ruleContext.getPackageDirectoryRelativeToExecroot(), ruleContext.getLabel()));
     }
 
     Artifact result = ruleContext.getTreeArtifact(fragment, newFileRoot());
@@ -180,7 +180,7 @@ public class SkylarkActionFactory implements SkylarkActionFactoryApi {
     Artifact result;
     PathFragment rootRelativePath;
     if (Starlark.NONE.equals(sibling)) {
-      rootRelativePath = ruleContext.getPackageDirectory().getRelative(filename);
+      rootRelativePath = ruleContext.getPackageDirectoryRelativeToExecroot().getRelative(filename);
     } else {
       PathFragment original = ((Artifact) sibling).getRootRelativePath();
       rootRelativePath = original.replaceName(filename);

@@ -218,7 +218,7 @@ public final class Actions {
         outputFileNames != null
             ? Preconditions.checkNotNull(label, actionLookupKey)
                 .getPackageIdentifier()
-                .getSourceRoot()
+                .getPathUnderExecRoot()
             : null;
     // Loop over the actions, looking at all outputs for conflicts.
     int actionIndex = 0;

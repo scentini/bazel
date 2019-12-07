@@ -255,8 +255,8 @@ public abstract class Artifact
   public static final Predicate<Artifact> MIDDLEMAN_FILTER = input -> !input.isMiddlemanArtifact();
 
   private final int hashCode;
-  private final ArtifactRoot root;
-  private final PathFragment execPath;
+  protected final ArtifactRoot root;
+  protected final PathFragment execPath;
 
   /**
    * Content-based output paths are experimental. Only derived artifacts that are explicitly opted
@@ -359,6 +359,11 @@ public abstract class Artifact
     }
 
     @Override
+    public final PathFragment getExecPath() {
+      return execPath;
+    }
+
+    @Override
     public PathFragment getRootRelativePath() {
       return getExecPath().relativeTo(getRoot().getExecPath());
     }
@@ -408,11 +413,7 @@ public abstract class Artifact
   }
 
   public final Path getPath() {
-    PathFragment rootRelativePath = getRootRelativePath();
-    if (rootRelativePath.startsWith(LabelConstants.EXTERNAL_PATH_PREFIX)) {
-      rootRelativePath = rootRelativePath.relativeTo(LabelConstants.EXTERNAL_PATH_PREFIX);
-    }
-    return root.getRoot().getRelative(rootRelativePath);
+    return root.getRoot().getRelative(getRootRelativePath());
   }
 
   public boolean hasParent() {
@@ -497,11 +498,6 @@ public abstract class Artifact
   @Override
   public final ArtifactRoot getRoot() {
     return root;
-  }
-
-  @Override
-  public final PathFragment getExecPath() {
-    return execPath;
   }
 
   @Override
@@ -609,7 +605,12 @@ public abstract class Artifact
 
     @Override
     public PathFragment getRootRelativePath() {
-      return getExecPath();
+      return execPath;
+    }
+
+    @Override
+    public final PathFragment getExecPath() {
+      return root.getExecPath().getRelative(execPath);
     }
 
     @Override

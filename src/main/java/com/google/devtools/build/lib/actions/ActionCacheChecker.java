@@ -23,6 +23,7 @@ import com.google.devtools.build.lib.actions.cache.ActionCache;
 import com.google.devtools.build.lib.actions.cache.DigestUtils;
 import com.google.devtools.build.lib.actions.cache.MetadataHandler;
 import com.google.devtools.build.lib.actions.cache.Protos.ActionCacheStatistics.MissReason;
+import com.google.devtools.build.lib.cmdline.LabelConstants;
 import com.google.devtools.build.lib.events.Event;
 import com.google.devtools.build.lib.events.EventHandler;
 import com.google.devtools.build.lib.events.EventKind;
@@ -34,6 +35,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 /**
@@ -447,7 +449,7 @@ public class ActionCacheChecker {
         inputArtifacts.add(artifact);
       } else {
         // Remember this execPath, we will try to resolve it as a source artifact.
-        unresolvedPaths.add(execPath);
+        unresolvedPaths.add(execPath.startsWith(LabelConstants.EXTERNAL_PATH_PREFIX) ? execPath.relativeTo(LabelConstants.EXTERNAL_PATH_PREFIX) : execPath);
       }
     }
 

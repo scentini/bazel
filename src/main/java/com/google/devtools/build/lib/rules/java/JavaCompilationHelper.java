@@ -339,7 +339,7 @@ public final class JavaCompilationHelper {
       return null;
     }
     PathFragment packageRelativePath =
-        compileJar.getRootRelativePath().relativeTo(ruleContext.getPackageDirectory());
+        compileJar.getRootRelativePath().relativeTo(ruleContext.getPackageDirectoryRelativeToExecroot());
     PathFragment path =
         FileSystemUtils.replaceExtension(packageRelativePath, "-paths-for-coverage.txt");
     return ruleContext.getPackageRelativeArtifact(path, compileJar.getRoot());
