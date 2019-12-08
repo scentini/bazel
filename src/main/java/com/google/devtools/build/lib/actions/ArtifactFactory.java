@@ -197,7 +197,6 @@ public class ArtifactFactory implements ArtifactResolver {
     Preconditions.checkArgument(!root.isSourceRoot());
     Preconditions.checkArgument(
         rootRelativePath.isAbsolute() == root.getRoot().isAbsolute(), rootRelativePath);
-    Preconditions.checkArgument(!rootRelativePath.containsUplevelReferences(), rootRelativePath);
     Preconditions.checkArgument(
         root.getRoot().asPath().startsWith(execRootParent),
         "%s must start with %s, root = %s, root fs = %s, execRootParent fs = %s",
@@ -398,11 +397,8 @@ public class ArtifactFactory implements ArtifactResolver {
         !relativePath.isEmpty(), "%s %s %s", relativePath, baseExecPath, baseRoot);
     PathFragment execPath =
         baseExecPath != null ? baseExecPath.getRelative(relativePath) : relativePath;
-    if (execPath.containsUplevelReferences()) {
-      // Source exec paths cannot escape the source root.
-      return null;
-    } else if(execPath.startsWith(LabelConstants.EXTERNAL_PATH_PREFIX)) {
-      execPath = execPath.relativeTo(LabelConstants.EXTERNAL_PATH_PREFIX);
+    if (execPath.startsWith(LabelConstants.EXTERNAL_REPOS_EXEC_PREFIX)) {
+      execPath = execPath.relativeTo(LabelConstants.EXTERNAL_REPOS_EXEC_PREFIX);
     }
     // Don't create an artifact if it's derived.
     if (isDerivedArtifact(execPath)) {
@@ -464,11 +460,6 @@ public class ArtifactFactory implements ArtifactResolver {
     ArrayList<PathFragment> unresolvedPaths = new ArrayList<>();
 
     for (PathFragment execPath : execPaths) {
-      if (execPath.containsUplevelReferences()) {
-        // Source exec paths cannot escape the source root.
-        result.put(execPath, null);
-        continue;
-      }
       // First try a quick map lookup to see if the artifact already exists.
       Artifact a = sourceArtifactCache.getArtifactIfValid(execPath);
       if (a != null) {

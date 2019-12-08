@@ -140,7 +140,7 @@ public final class RepositoryName implements Serializable {
    * was invalid.
    */
   public static Pair<RepositoryName, PathFragment> fromPathFragment(PathFragment path) {
-    if (path.segmentCount() < 2 || !path.startsWith(LabelConstants.EXTERNAL_PATH_PREFIX)) {
+    if (path.segmentCount() < 2 || !path.startsWith(LabelConstants.EXTERNAL_REPOS_EXEC_PREFIX)) {
       return null;
     }
     try {
@@ -250,7 +250,7 @@ public final class RepositoryName implements Serializable {
   public PathFragment getPathUnderExecRoot() {
     return isDefault() || isMain()
         ? PathFragment.EMPTY_FRAGMENT
-        : LabelConstants.EXTERNAL_PATH_PREFIX.getRelative(strippedName());
+        : LabelConstants.EXTERNAL_REPOS_EXEC_PREFIX.getRelative(strippedName());
   }
 
   /**
@@ -259,7 +259,7 @@ public final class RepositoryName implements Serializable {
   // TODO(kchodorow): remove once execroot is reorg-ed.
   public PathFragment getRunfilesPath() {
     return isDefault() || isMain()
-        ? PathFragment.EMPTY_FRAGMENT : PathFragment.create("..").getRelative(strippedName());
+        ? PathFragment.EMPTY_FRAGMENT : LabelConstants.EXTERNAL_REPOS_EXEC_PREFIX.getRelative(strippedName());
   }
 
   /**

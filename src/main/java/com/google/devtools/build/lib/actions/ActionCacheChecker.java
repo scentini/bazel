@@ -416,7 +416,6 @@ public class ActionCacheChecker {
     if (entry == null || entry.isCorrupted()) {
       return ImmutableList.of();
     }
-
     List<PathFragment> outputs = new ArrayList<>();
     for (Artifact output : action.getOutputs()) {
       outputs.add(output.getExecPath());
@@ -449,7 +448,7 @@ public class ActionCacheChecker {
         inputArtifacts.add(artifact);
       } else {
         // Remember this execPath, we will try to resolve it as a source artifact.
-        unresolvedPaths.add(execPath.startsWith(LabelConstants.EXTERNAL_PATH_PREFIX) ? execPath.relativeTo(LabelConstants.EXTERNAL_PATH_PREFIX) : execPath);
+        unresolvedPaths.add(execPath.startsWith(LabelConstants.EXTERNAL_REPOS_EXEC_PREFIX) ? execPath.relativeTo(LabelConstants.EXTERNAL_REPOS_EXEC_PREFIX) : execPath);
       }
     }
 

@@ -101,14 +101,16 @@ public class SymlinkForest {
     // directory.
     // From <output_base>/execroot/<main repo name>/external/<external repo name>
     // to   <output_base>/external/<external repo name>
-    Path execrootLink = execroot.getRelative(repository.getPathUnderExecRoot());
+    Path execrootLink = execroot.getRelative(LabelConstants.EXTERNAL_PATH_PREFIX).getRelative(repository.getSourceRoot());
+    Path newExecrootLink = execroot.getParentDirectory().getRelative(repository.getSourceRoot());
     if (externalRepoLinks.isEmpty()) {
       execroot.getRelative(LabelConstants.EXTERNAL_PACKAGE_NAME).createDirectoryAndParents();
     }
     if (!externalRepoLinks.add(execrootLink)) {
       return;
     }
-    execrootLink.createSymbolicLink(source);
+    newExecrootLink.createSymbolicLink(source);
+    execrootLink.createSymbolicLink(newExecrootLink);
   }
 
   private void plantSymlinkForestWithFullMainRepository(Path mainRepoRoot) throws IOException {
@@ -264,7 +266,7 @@ public class SymlinkForest {
 
   /** Performs the filesystem operations to plant the symlink forest. */
   public void plantSymlinkForest() throws IOException {
-    deleteTreesBelowNotPrefixed(execroot, prefix);
+    deleteTreesBelowNotPrefixed(execroot.getParentDirectory(), prefix);
 
     boolean shouldLinkAllTopLevelItems = false;
     Map<Path, Path> mainRepoLinks = Maps.newLinkedHashMap();

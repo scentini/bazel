@@ -462,7 +462,7 @@ public final class Runfiles implements RunfilesApi {
     Map<PathFragment, Artifact> manifest = getSymlinksAsMap(checker);
     // Add unconditional artifacts (committed to inclusion on construction of runfiles).
     for (Artifact artifact : getUnconditionalArtifacts()) {
-      checker.put(manifest, artifact.getRootRelativePath(), artifact);
+      checker.put(manifest, artifact.getExecPath(), artifact);
     }
 
     // Add conditional artifacts (only included if they appear in a pruning manifest).
@@ -470,7 +470,7 @@ public final class Runfiles implements RunfilesApi {
       // This map helps us convert from source tree root-relative paths back to artifacts.
       Map<String, Artifact> allowedRunfiles = new HashMap<>();
       for (Artifact artifact : pruningManifest.getCandidateRunfiles()) {
-        allowedRunfiles.put(artifact.getRootRelativePath().getPathString(), artifact);
+        allowedRunfiles.put(artifact.getExecPathString(), artifact);
       }
       try (BufferedReader reader = new BufferedReader(
           new InputStreamReader(resolver.toPath(pruningManifest.getManifestFile()).getInputStream()))) {
@@ -478,7 +478,7 @@ public final class Runfiles implements RunfilesApi {
         while ((line = reader.readLine()) != null) {
           Artifact artifact = allowedRunfiles.get(line);
           if (artifact != null) {
-            checker.put(manifest, artifact.getRootRelativePath(), artifact);
+            checker.put(manifest, artifact.getExecPath(), artifact);
           }
         }
       }
@@ -571,7 +571,7 @@ public final class Runfiles implements RunfilesApi {
     }
 
     private PathFragment getExternalPath(PathFragment path) {
-      return checkForWorkspace(path.relativeTo(LabelConstants.EXTERNAL_PACKAGE_NAME));
+      return checkForWorkspace(path.relativeTo(LabelConstants.EXTERNAL_REPOS_EXEC_PREFIX));
     }
 
     private PathFragment checkForWorkspace(PathFragment path) {
@@ -581,7 +581,7 @@ public final class Runfiles implements RunfilesApi {
     }
 
     private static boolean isUnderWorkspace(PathFragment path) {
-      return !path.startsWith(LabelConstants.EXTERNAL_PACKAGE_NAME);
+      return !path.startsWith(LabelConstants.EXTERNAL_REPOS_EXEC_PREFIX);
     }
   }
 

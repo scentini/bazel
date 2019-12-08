@@ -1042,8 +1042,8 @@ public class CppCompileAction extends AbstractAction
         continue;
       }
       // One starting ../ is okay for getting to a sibling repository.
-      if (includePath.startsWith(LabelConstants.EXTERNAL_PATH_PREFIX)) {
-        includePath = includePath.relativeTo(LabelConstants.EXTERNAL_PATH_PREFIX);
+      if (includePath.startsWith(LabelConstants.EXTERNAL_REPOS_EXEC_PREFIX)) {
+        includePath = includePath.relativeTo(LabelConstants.EXTERNAL_REPOS_EXEC_PREFIX);
       }
       if (includePath.isAbsolute() || includePath.containsUplevelReferences()) {
         throw new ActionExecutionException(

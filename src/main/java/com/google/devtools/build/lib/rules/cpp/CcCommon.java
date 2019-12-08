@@ -620,10 +620,6 @@ public final class CcCommon {
         continue;
       }
       PathFragment includesPath = packageFragment.getRelative(includesAttr);
-      if (includesPath.containsUplevelReferences()) {
-        ruleContext.attributeError("includes",
-            "Path references a path above the execution root.");
-      }
       if (includesPath.isEmpty()) {
         ruleContext.attributeError(
             "includes",

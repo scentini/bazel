@@ -1168,63 +1168,6 @@ public abstract class SkyframeExecutor implements WalkableGraphFactory {
     return ImmutableList.of(value.getStableArtifact(), value.getVolatileArtifact());
   }
 
-  public Map<PathFragment, Root> getArtifactRootsForFiles(
-      final ExtendedEventHandler eventHandler, Iterable<PathFragment> execPaths)
-      throws InterruptedException {
-    return getArtifactRoots(eventHandler, execPaths, true);
-  }
-
-  public Map<PathFragment, Root> getArtifactRoots(
-      final ExtendedEventHandler eventHandler, Iterable<PathFragment> execPaths)
-      throws InterruptedException {
-    return getArtifactRoots(eventHandler, execPaths, false);
-  }
-
-  private Map<PathFragment, Root> getArtifactRoots(
-      final ExtendedEventHandler eventHandler, Iterable<PathFragment> execPaths, boolean forFiles)
-      throws InterruptedException {
-    final Map<PathFragment, SkyKey> packageKeys = new HashMap<>();
-    for (PathFragment execPath : execPaths) {
-      try {
-        PackageIdentifier pkgIdentifier =
-            PackageIdentifier.discoverFromExecPath(execPath, forFiles);
-        packageKeys.put(execPath, ContainingPackageLookupValue.key(pkgIdentifier));
-      } catch (LabelSyntaxException e) {
-        continue;
-      }
-    }
-
-    EvaluationResult<ContainingPackageLookupValue> result;
-    EvaluationContext evaluationContext =
-        EvaluationContext.newBuilder()
-            .setKeepGoing(true)
-            .setNumThreads(1)
-            .setEventHander(eventHandler)
-            .build();
-    synchronized (valueLookupLock) {
-      result = buildDriver.evaluate(packageKeys.values(), evaluationContext);
-    }
-
-    if (result.hasError()) {
-      return new HashMap<>();
-    }
-
-    Map<PathFragment, Root> roots = new HashMap<>();
-    for (PathFragment execPath : execPaths) {
-      ContainingPackageLookupValue value = result.get(packageKeys.get(execPath));
-      if (value.hasContainingPackage()) {
-        roots.put(
-            execPath,
-            maybeTransformRootForRepository(
-                value.getContainingPackageRoot(),
-                value.getContainingPackageName().getRepository()));
-      } else {
-        roots.put(execPath, null);
-      }
-    }
-    return roots;
-  }
-
   // This must always be consistent with Package.getSourceRoot; otherwise computing source roots
   // from exec paths does not work, which can break the action cache for input-discovering actions.
   static Root maybeTransformRootForRepository(Root packageRoot, RepositoryName repository) {
