@@ -462,7 +462,7 @@ public final class Runfiles implements RunfilesApi {
     Map<PathFragment, Artifact> manifest = getSymlinksAsMap(checker);
     // Add unconditional artifacts (committed to inclusion on construction of runfiles).
     for (Artifact artifact : getUnconditionalArtifacts()) {
-      checker.put(manifest, artifact.getExecPath(), artifact);
+      checker.put(manifest, artifact.getRootRelativePath(), artifact);
     }
 
     // Add conditional artifacts (only included if they appear in a pruning manifest).

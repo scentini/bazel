@@ -279,14 +279,14 @@ public class ProtoCommon {
                 .getLabel()
                 .getPackageIdentifier()
                 .getRepository()
-                .getSourceRoot()
+                .getPathUnderExecRoot()
                 .getRelative(stripImportPrefixAttribute.toRelative());
       } else {
         stripImportPrefix =
             ruleContext
                 .getLabel()
                 .getPackageIdentifier()
-                .getSourceRoot()
+                .getPathUnderExecRoot()
                 .getRelative(stripImportPrefixAttribute);
       }
 
@@ -303,7 +303,7 @@ public class ProtoCommon {
     } else {
       // Has generated sources, but neither strip_import_prefix nor import_prefix
       stripImportPrefix =
-          ruleContext.getLabel().getPackageIdentifier().getRepository().getSourceRoot();
+          ruleContext.getLabel().getPackageIdentifier().getRepository().getPathUnderExecRoot();
 
       importPrefix = PathFragment.EMPTY_FRAGMENT;
     }

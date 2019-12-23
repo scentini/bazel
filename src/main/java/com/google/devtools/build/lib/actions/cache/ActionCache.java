@@ -138,7 +138,7 @@ public interface ActionCache {
     public byte[] getFileDigest() {
       if (digest == null) {
         digest = DigestUtils.fromMetadata(mdMap);
-        mdMap = null;
+        //mdMap = null;
       }
       return digest;
     }

@@ -417,11 +417,13 @@ public abstract class Artifact
       artifact.setGeneratingActionKey(generatingActionKey);
       return INTERNER.intern(artifact);
     }
+    @Override
+    public final Path getPath(){
+      return root.getRoot().getRelative(getRootRelativePath());
+    }
   }
 
-  public final Path getPath() {
-    return root.getRoot().getRelative(getRootRelativePath());
-  }
+  public abstract Path getPath();
 
   public boolean hasParent() {
     return getParent() != null;
@@ -612,12 +614,17 @@ public abstract class Artifact
 
     @Override
     public PathFragment getRootRelativePath() {
-      return execPath;
+      return root.getExecPath().getRelative(execPath);
+    }
+
+    @Override
+    public final Path getPath(){
+      return root.getRoot().getRelative(execPath);
     }
 
     @Override
     public final PathFragment getExecPath() {
-      return root.getExecPath().getRelative(execPath);
+      return getRootRelativePath();
     }
 
     @Override
